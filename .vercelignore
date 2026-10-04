@@ -1,0 +1,6 @@
+tests/
+*.db
+menu_backup.json
+.venv/
+__pycache__/
+cli.py

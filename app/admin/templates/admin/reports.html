@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}{% block content %}<h3>📈 แดชบอร์ดสรุป</h3>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px">
+<div class="card">ยอดขายวันนี้<h2>{{ s.today_sales|round(2) }} ฿</h2></div><div class="card">บิลวันนี้<h2>{{ s.today_bills }}</h2></div>
+<div class="card">เฉลี่ยต่อบิล<h2>{{ s.avg|round(2) }} ฿</h2></div><div class="card">ยอดขายสะสม<h2>{{ s.total|round(2) }} ฿</h2></div>
+<div class="card">ออเดอร์ค้างครัว<h2>{{ s.open_orders }}</h2></div>
+<div class="card">โต๊ะ<br>ว่าง {{ s.tables.get('free', 0) }} · มีลูกค้า {{ s.tables.get('occupied', 0) }} · รอเช็คบิล {{ s.tables.get('waiting_bill', 0) }}</div></div>
+<h3>ยอดขายรายวัน</h3><div class="card">{% set mx = (daily|map(attribute='s')|max) if daily else 1 %}{% for d in daily|reverse %}<div style="display:flex;align-items:center;margin:3px 0"><span style="width:100px">{{ d.d }}</span>
+<div style="background:#27ae60;height:16px;width:{{ (d.s / mx * 100)|round }}%;min-width:2px"></div><span style="margin-left:8px">{{ d.s|round(2) }} ({{ d.n }} บิล)</span></div>{% else %}ยังไม่มีข้อมูล{% endfor %}</div>
+<h3>เมนูขายดี</h3><div class="card">{% for b in best %}<div>{{ loop.index }}. {{ b.name }} — {{ b.n }} จาน</div>{% else %}ยังไม่มีข้อมูล{% endfor %}</div>
+<h3>รายการบิล</h3><form class="card" method="get">🔍 <input name="q" value="{{ q }}" placeholder="เลขบิล หรือเบอร์สมาชิก"> <select name="sort"><option value="new" {{ 'selected' if sort == 'new' }}>ใหม่สุดก่อน</option><option value="old" {{ 'selected' if sort == 'old' }}>เก่าสุดก่อน</option><option value="high" {{ 'selected' if sort == 'high' }}>ยอดสูงสุดก่อน</option></select><button>ค้นหา</button></form>
+<div class="card"><table><tr><th>บิล</th><th>เวลา</th><th>โต๊ะ</th><th>สมาชิก</th><th>สุทธิ</th><th></th></tr>{% for b in p.items %}<tr><td>#{{ b.id }}</td><td>{{ b.paid }}</td><td>{{ b.table_id }}</td><td>{{ b.phone or '-' }}</td><td>{{ b.total }}</td><td><a href="/admin/receipt/{{ b.id }}">ใบเสร็จ</a></td></tr>{% else %}<tr><td>ไม่พบบิล</td></tr>{% endfor %}</table></div>
+<p>หน้า {{ p.page }} / {{ p.pages or 1 }} {% if p.has_prev %}<a class="btn" href="?page={{ p.prev_num }}&q={{ q|urlencode }}&sort={{ sort }}">« ก่อนหน้า</a>{% endif %} {% if p.has_next %}<a class="btn" href="?page={{ p.next_num }}&q={{ q|urlencode }}&sort={{ sort }}">ถัดไป »</a>{% endif %}</p>{% endblock %}

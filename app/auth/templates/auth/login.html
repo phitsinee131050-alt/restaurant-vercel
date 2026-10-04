@@ -1,0 +1,3 @@
+{% extends "auth/layout.html" %}{% block content %}<h2>🍜 เข้าสู่ระบบ</h2><form class="card" method="post">
+{% if err %}<p class="err">{{ err }}</p>{% endif %}เบอร์โทร (ลูกค้า) หรือชื่อผู้ใช้ (พนักงาน)<input name="username" required>รหัสผ่าน<input name="password" type="password" required>
+<button>เข้าสู่ระบบ</button><p style="text-align:center">ยังไม่เป็นสมาชิก? <a href="/register">สมัครด้วยเบอร์โทร</a></p></form>{% endblock %}

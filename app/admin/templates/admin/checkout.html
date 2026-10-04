@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}{% block content %}
+<h3>เช็คบิล โต๊ะ {{ t }}</h3>
+<form class="card" method="get"><b>เลือกรายการที่จ่ายในบิลนี้ (แยกบิลตามรายการ)</b> <small>ใส่ 0 = ยังไม่จ่ายรายการนั้น</small>
+<table><tr><th>รายการ</th><th>จ่ายกี่จาน</th><th>ราคา</th></tr>
+{% for i in items %}<tr><td>{{ i.name }} <small>{{ i.note }}</small> (สั่ง {{ i.qty }})</td><td><input type="number" name="pay_{{ i.id }}" min="0" max="{{ i.qty }}" value="{{ paid[i.id] }}" style="width:60px"></td><td>{{ (i.price * i.qty)|round(2) }}</td></tr>
+{% else %}<tr><td>ไม่มีรายการค้างชำระ</td></tr>{% endfor %}</table>
+ส่วนลด (บาท) <input name="discount" type="number" step="0.01" min="0" value="{{ disc }}"> หารจ่ายเท่ากัน <input name="people" type="number" min="1" value="{{ people }}" style="width:55px"> คน <button>คำนวณ</button></form>
+<div class="card">รวม {{ c.subtotal }}<br>ส่วนลด {{ c.discount }}<br>ค่าบริการ {{ c.service }}<br>ภาษี {{ c.vat }}<br><b>สุทธิ {{ c.total }} บาท</b>{% if people > 1 %}<br>คนละ {{ per }} บาท{% endif %}</div>
+<form method="post"><input type="hidden" name="discount" value="{{ disc }}">{% for i in items %}<input type="hidden" name="pay_{{ i.id }}" value="{{ paid[i.id] }}">{% endfor %}
+<input name="phone" placeholder="เบอร์สมาชิก (สะสมแต้ม)"><button class="green">ชำระเงิน + พิมพ์ใบเสร็จ</button></form>{% endblock %}

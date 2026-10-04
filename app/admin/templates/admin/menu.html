@@ -1,0 +1,12 @@
+{% extends "admin/base.html" %}{% block content %}
+<form class="card" method="post" enctype="multipart/form-data"><b>เพิ่มเมนู</b><br><input name="name" placeholder="ชื่อ" required minlength="2"><input name="category" list="cats" placeholder="หมวดหมู่" required>
+<datalist id="cats">{% for c in cats %}<option value="{{ c }}">{% endfor %}</datalist><input name="price" type="number" step="0.01" min="0.01" placeholder="ราคา" required><input type="file" name="image" accept="image/*"><button>เพิ่ม</button></form>
+<form class="card" method="post" action="/admin/menu/import" enctype="multipart/form-data"><b>📁 นำเข้า/ส่งออกเมนู</b>
+<a class="btn" href="/admin/menu/export.csv">ส่งออก CSV</a> <a class="btn" href="/admin/menu/export.json">ส่งออก JSON</a> หรืออัปโหลด <input type="file" name="file" accept=".csv,.json"><button>นำเข้า</button></form>
+<form class="card" method="get">🔍 <input name="q" value="{{ q }}" placeholder="ค้นหาชื่อเมนู"> <select name="cat"><option value="">ทุกหมวด</option>{% for c in cats %}<option {{ 'selected' if c == cat }}>{{ c }}</option>{% endfor %}</select>
+<select name="sort"><option value="cat" {{ 'selected' if sort == 'cat' }}>เรียงตามหมวด</option><option value="name" {{ 'selected' if sort == 'name' }}>ชื่อ ก-ฮ</option><option value="price_asc" {{ 'selected' if sort == 'price_asc' }}>ราคาน้อย→มาก</option><option value="price_desc" {{ 'selected' if sort == 'price_desc' }}>ราคามาก→น้อย</option></select><button>ค้นหา</button></form>
+{% for m in p.items %}<div class="card {{ '' if m.available else 'off' }}">{% if m.image %}<img src="{{ m.image|img_src }}"> {% endif %}<b>{{ m.name }}</b> ({{ m.category }}) — {{ m.price|int }} บาท
+<a class="btn" href="/admin/menu/{{ m.id }}/edit">แก้ไข</a>
+<form method="post" action="/admin/menu/{{ m.id }}" style="display:inline"><button name="act" value="toggle">{{ 'ตั้งเป็น "หมด"' if m.available else 'กลับมาขาย' }}</button>
+<button class="red" name="act" value="delete" onclick="return confirm('ลบเมนู {{ m.name }} ?')">ลบ</button></form></div>{% else %}<div class="card">ไม่พบเมนู</div>{% endfor %}
+<p>หน้า {{ p.page }} / {{ p.pages or 1 }} {% if p.has_prev %}<a class="btn" href="?page={{ p.prev_num }}&q={{ q|urlencode }}&cat={{ cat|urlencode }}&sort={{ sort }}">« ก่อนหน้า</a>{% endif %} {% if p.has_next %}<a class="btn" href="?page={{ p.next_num }}&q={{ q|urlencode }}&cat={{ cat|urlencode }}&sort={{ sort }}">ถัดไป »</a>{% endif %}</p>{% endblock %}

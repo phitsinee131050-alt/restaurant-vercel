@@ -1,0 +1,5 @@
+{% extends "customer/base.html" %}{% block color %}#e67e22{% endblock %}
+{% block nav %}<b>โต๊ะ {{ t.id }}</b> <a href="{{ url_for('customer.menu', token=t.token) }}">สั่งเพิ่ม</a>{% endblock %}
+{% block content %}{% for o in orders %}<div class="card"><b>ออเดอร์ #{{ o.id }}</b> — {{ TH[o.status] }}
+<ul>{% for i in items[o.id] %}<li>{{ i.name }} x{{ i.qty }} <small>{{ i.note }}</small></li>{% endfor %}</ul></div>
+{% else %}<p>ยังไม่มีออเดอร์</p>{% endfor %}{% endblock %}

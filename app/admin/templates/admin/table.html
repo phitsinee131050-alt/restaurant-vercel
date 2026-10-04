@@ -1,0 +1,10 @@
+{% extends "admin/base.html" %}{% block content %}
+<h3>โต๊ะ {{ t.id }} — {{ TH[t.status] }}</h3>
+<form method="post" action="{{ url_for('admin.set_status', tid=t.id) }}">{% for s in ['free','occupied','waiting_bill'] %}<button name="status" value="{{ s }}">{{ TH[s] }}</button> {% endfor %}</form>
+<div class="card"><table>{% for i in items %}<tr><td>{{ i.name }} <small>{{ i.note }}</small></td><td>{{ i.qty }} x {{ i.price|int }}</td><td>
+<form method="post" action="{{ url_for('admin.item', iid=i.id) }}"><button name="act" value="inc">+</button> <button name="act" value="dec">-</button> <button class="red" name="act" value="cancel">ยกเลิก</button></form></td></tr>
+{% else %}<tr><td>ยังไม่มีรายการ</td></tr>{% endfor %}</table></div>
+<form method="post" action="{{ url_for('admin.add', tid=t.id) }}"><select name="menu_id">{% for m in menu %}<option value="{{ m.id }}">{{ m.name }} ({{ m.price|int }})</option>{% endfor %}</select>
+<input name="qty" type="number" value="1" min="1" style="width:60px"><button>เพิ่มรายการ</button></form>
+<form method="post" action="{{ url_for('admin.move', tid=t.id) }}">ย้าย/รวมไปโต๊ะ <select name="to">{% for o in tables if o.id != t.id %}<option>{{ o.id }}</option>{% endfor %}</select><button>ย้าย</button></form>
+<p><a class="btn green" href="{{ url_for('admin.checkout', tid=t.id) }}">เช็คบิล</a></p>{% endblock %}

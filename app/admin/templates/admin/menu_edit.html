@@ -1,0 +1,15 @@
+{% extends "admin/base.html" %}{% block content %}<h3>แก้ไขเมนู</h3>
+<form class="card" method="post" enctype="multipart/form-data">ชื่อ <input name="name" value="{{ m.name }}" required minlength="2"><br>หมวดหมู่ <input name="category" list="cats" value="{{ m.category }}" required>
+<datalist id="cats">{% for c in cats %}<option value="{{ c }}">{% endfor %}</datalist><br>ราคา <input name="price" type="number" step="0.01" min="0.01" value="{{ m.price }}" required><br>
+{% if m.image %}<img src="{{ m.image|img_src }}"><br>{% endif %}เปลี่ยนรูป <input type="file" name="image" accept="image/*"><br>
+<label><input type="checkbox" name="available" {{ 'checked' if m.available }}> พร้อมขาย (ไม่ติ๊ก = "หมด")</label><br><br><button class="green">บันทึก</button> <a class="btn" href="/admin/menu">ยกเลิก</a></form>
+<h3>ตัวเลือกของเมนูนี้ <small>(ลูกค้าเห็นเฉพาะที่ตั้งไว้ที่นี่)</small></h3>
+{% for o in options %}<div class="card"><b>{{ o.name }}</b>{% if o.kind == 'choice' %} — ให้เลือก: {{ o.choices }}{% else %} — ติ๊กเพิ่ม{% if o.price %} +{{ o.price|int }} บาท{% endif %}{% endif %}
+<form method="post" action="/admin/menu/options/{{ o.id }}/delete" style="display:inline"><button class="red">ลบ</button></form></div>
+{% else %}<div class="card">ยังไม่มีตัวเลือก (ลูกค้าสั่งได้อย่างเดียว ไม่มีตัวเลือกเสริม)</div>{% endfor %}
+<form class="card" method="post" action="/admin/menu/{{ m.id }}/options/add"><b>เพิ่มจากแบบสำเร็จรูป</b> <select name="preset"><option value="">— เลือก —</option>
+{% for k, p in presets.items() %}<option value="{{ k }}">{{ p[1] }}{% if p[3] %} +{{ p[3] }}{% endif %}</option>{% endfor %}</select><button>เพิ่ม</button></form>
+<form class="card" method="post" action="/admin/menu/{{ m.id }}/options/add"><b>หรือตั้งเอง</b> เช่น "เพิ่มไข่มุก +10" หรือ "ระดับหวาน"<br>
+<select name="kind"><option value="addon">ติ๊กเพิ่ม (มีราคา)</option><option value="choice">ให้เลือก 1 อย่าง</option></select>
+<input name="name" placeholder="ชื่อตัวเลือก" required><input name="choices" placeholder="ตัวเลือก คั่นด้วย , (แบบให้เลือก)" style="width:240px"><input name="price" type="number" step="0.01" min="0" placeholder="ราคาเพิ่ม" style="width:100px"><button>เพิ่ม</button></form>
+{% endblock %}

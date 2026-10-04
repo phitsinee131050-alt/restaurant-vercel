@@ -1,0 +1,6 @@
+{% extends "admin/base.html" %}{% block content %}
+<form class="card noprint" method="get">ที่อยู่เว็บที่ใช้ทำ QR: <input name="base" value="{{ base }}" style="width:340px"> <button>สร้าง QR ใหม่</button> <button type="button" class="green" onclick="print()">🖨️ พิมพ์</button>
+<br><small>ตอนนี้ QR ชี้ไปที่ {{ base }} — มือถือต้องเข้าที่อยู่นี้ได้จริงถึงจะสแกนผ่าน (ถ้าจะพิมพ์ใช้จริง ต้องเป็นที่อยู่ออนไลน์ถาวร)</small></form>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px">
+{% for t in tables %}<div class="card" style="text-align:center"><h2>โต๊ะ {{ t.id }}</h2>
+<img src="/admin/qr/{{ t.id }}.png?base={{ base|urlencode }}" style="width:200px;max-width:100%"><div>สแกนเพื่อสั่งอาหาร</div><small>{{ base }}t/{{ t.token }}</small></div>{% endfor %}</div>{% endblock %}

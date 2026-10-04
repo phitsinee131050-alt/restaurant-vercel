@@ -1,0 +1,7 @@
+{% extends "admin/base.html" %}{% block content %}
+<div class="card">📱 เปิดจากมือถือ/แท็บเล็ต (Wi-Fi เดียวกัน): <b>{{ lan }}</b></div>
+<h3>ยอดขายวันนี้: {{ sales|round(2) }} บาท</h3>
+{% for t in tables %}<div class="card">โต๊ะ {{ t.id }} — <b>{{ TH[t.status] }}</b>
+<a class="btn" href="{{ url_for('admin.table', tid=t.id) }}">จัดการ/สั่ง</a> <a href="/t/{{ t.token }}" target="_blank">ลิงก์ลูกค้า</a> <a href="/admin/qr/{{ t.id }}.png" target="_blank">QR</a>
+{% if session.role == 'admin' %}<form method="post" action="/admin/tables/{{ t.id }}/delete" style="display:inline"><button class="red" onclick="return confirm('ลบโต๊ะ {{ t.id }} ?')">ลบโต๊ะ</button></form>{% endif %}</div>{% endfor %}
+{% if session.role == 'admin' %}<form method="post" action="/admin/tables/add"><button class="green">➕ เพิ่มโต๊ะ</button></form>{% endif %}{% endblock %}

@@ -1,0 +1,4 @@
+{% extends "auth/layout.html" %}{% block content %}<h2>สมัครสมาชิก</h2><form class="card" method="post">
+{% for e in errs %}<p class="err">• {{ e }}</p>{% endfor %}เบอร์โทร (ใช้สะสมแต้ม)<input name="phone" inputmode="numeric" maxlength="10" required>ชื่อ<input name="name" required>
+รหัสผ่าน (อย่างน้อย 6 ตัว)<input name="password" type="password" required>ยืนยันรหัสผ่าน<input name="confirm" type="password" required>
+<button>สมัครสมาชิก</button><p style="text-align:center"><a href="/login">มีบัญชีแล้ว? เข้าสู่ระบบ</a></p></form>{% endblock %}

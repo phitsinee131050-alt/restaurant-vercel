@@ -1,0 +1,11 @@
+{% extends "customer/base.html" %}{% block color %}#e67e22{% endblock %}
+{% block nav %}<b>โต๊ะ {{ t.id }}</b> <a href="{{ url_for('customer.status', token=t.token) }}">ดูสถานะอาหาร</a>{% endblock %}
+{% block content %}<form method="post">
+{% for m in menu %}{% if loop.first or menu[loop.index0-1].category != m.category %}<h3>{{ m.category }}</h3>{% endif %}
+<div class="card {{ '' if m.available else 'off' }}">
+{% if m.image %}<img src="{{ m.image|img_src }}"> {% endif %}<b>{{ m.name }}</b> — {{ m.price|int }} บาท
+{% if m.available %}<br>จำนวน <input type="number" name="qty_{{ m.id }}" min="0" value="0" style="width:60px">
+{% for o in opts.get(m.id, []) %}{% if o.kind == 'choice' %}<select name="opt_{{ o.id }}"><option value="">{{ o.name }}</option>{% for c in o.choices.split(',') %}<option>{{ c }}</option>{% endfor %}</select>
+{% else %}<label><input type="checkbox" name="opt_{{ o.id }}" value="1"> {{ o.name }}{% if o.price %} +{{ o.price|int }}{% endif %}</label> {% endif %}{% endfor %}
+{% else %}<b style="color:#c0392b">(หมด)</b>{% endif %}</div>{% endfor %}
+<button class="green">สั่งอาหาร</button></form>{% endblock %}

@@ -1,0 +1,6 @@
+{% extends "kitchen/base.html" %}{% block color %}#c0392b{% endblock %}
+{% block nav %}<b>หน้าจอครัว (KDS)</b>{% endblock %}
+{% block content %}{% for o, items in data %}<div class="card {{ o.status }}"><b>#{{ o.id }} โต๊ะ {{ o.table_id }}</b> · {{ o.created }} · {{ TH[o.status] }}
+<ul>{% for i in items %}<li>{{ i.name }} x{{ i.qty }} <b>{{ i.note }}</b></li>{% endfor %}</ul>
+{% if o.status in NEXT %}<form method="post" action="{{ url_for('kitchen.advance', oid=o.id, status=NEXT[o.status][0]) }}"><button class="green">{{ NEXT[o.status][1] }}</button></form>{% endif %}</div>
+{% else %}<p>ไม่มีออเดอร์ค้าง</p>{% endfor %}{% endblock %}

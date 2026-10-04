@@ -1,0 +1,11 @@
+{% extends "admin/base.html" %}{% block content %}
+<div class="card">ลิงก์ให้ลูกค้า: <a href="/t/queue" target="_blank">หน้ารับคิว</a> (<a href="/admin/qr/page/queue.png" target="_blank">QR</a>) · <a href="/t/reserve" target="_blank">หน้าจองโต๊ะ</a> (<a href="/admin/qr/page/reserve.png" target="_blank">QR</a>)</div>
+<h3>จองโต๊ะล่วงหน้า</h3><form class="card" method="post"><input type="hidden" name="kind" value="res">
+<input name="name" placeholder="ชื่อ" required><input name="phone" placeholder="เบอร์"><input name="time" placeholder="วัน/เวลา เช่น 2026-10-05 18:00" required>
+<input name="seats" type="number" value="2" style="width:60px"><button>จอง</button></form>
+{% for r in res %}<div class="card">{{ r.time }} — {{ r.name }} ({{ r.phone }}) {{ r.seats }} ที่นั่ง
+<form method="post" action="{{ url_for('admin.reservation_act', kind='res', rid=r.id, act='x') }}" style="display:inline"><button class="red">ลบ</button></form></div>{% endfor %}
+<h3>ระบบคิว</h3><form class="card" method="post"><input type="hidden" name="kind" value="queue"><input name="name" placeholder="ชื่อลูกค้า" required><button>รับคิว</button></form>
+{% for t in queue %}<div class="card">คิว {{ t.number }} — {{ t.name }} ({{ t.status }})
+<form method="post" action="{{ url_for('admin.reservation_act', kind='queue', rid=t.id, act='called') }}" style="display:inline"><button>เรียกคิว</button></form>
+<form method="post" action="{{ url_for('admin.reservation_act', kind='queue', rid=t.id, act='done') }}" style="display:inline"><button class="green">เสร็จ</button></form></div>{% endfor %}{% endblock %}

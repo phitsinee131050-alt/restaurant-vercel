@@ -1,0 +1,6 @@
+{% extends "admin/base.html" %}{% block content %}<h3>🧾 บันทึกการแก้ไขข้อมูล</h3>
+<form class="card" method="get">ค้นหา <input name="q" value="{{ q }}"> ผู้ทำรายการ <input name="user" value="{{ who }}" style="width:110px"><button>กรอง</button></form>
+<div class="card"><table><tr><th>เวลา</th><th>ผู้ทำ</th><th>การกระทำ</th><th>รายละเอียด</th></tr>
+{% for l in p.items %}<tr><td>{{ l.created }}</td><td>{{ l.user }}</td><td>{{ l.action }}</td><td>{{ l.detail }}</td></tr>{% else %}<tr><td>ไม่พบข้อมูล</td></tr>{% endfor %}</table></div>
+<p>หน้า {{ p.page }} / {{ p.pages or 1 }} {% if p.has_prev %}<a class="btn" href="?page={{ p.prev_num }}&user={{ who|urlencode }}&q={{ q|urlencode }}">« ก่อนหน้า</a>{% endif %}
+{% if p.has_next %}<a class="btn" href="?page={{ p.next_num }}&user={{ who|urlencode }}&q={{ q|urlencode }}">ถัดไป »</a>{% endif %}</p>{% endblock %}

@@ -1,0 +1,8 @@
+{% extends "customer/base.html" %}{% block color %}#e67e22{% endblock %}
+{% block nav %}<b>สถานะคิว</b> <a href="/t/queue">รับคิวใหม่</a> <a href="/t/reserve">จองโต๊ะ</a>{% endblock %}
+{% block content %}<div class="card" style="text-align:center">
+<div>คิวของคุณ</div><div style="font-size:64px;font-weight:bold">{{ t.number }}</div><div>{{ t.name }}</div><hr>
+{% if t.status == 'called' %}<h2 style="color:#27ae60">ถึงคิวคุณแล้ว! กรุณาแจ้งพนักงานหน้าร้าน</h2>
+{% elif t.status == 'done' %}<h3>คิวนี้เสร็จสิ้นแล้ว</h3>
+{% else %}<div>รออีก <b>{{ ahead }}</b> คิว</div>{% endif %}
+<p>คิวที่กำลังเรียก: <b>{{ cur.number if cur else '-' }}</b></p><small>หน้านี้อัปเดตอัตโนมัติ</small></div>{% endblock %}

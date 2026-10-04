@@ -1,0 +1,6 @@
+{% extends "admin/base.html" %}{% block content %}
+<div class="card" style="max-width:360px"><h3>ใบเสร็จ #{{ b.id }}</h3>โต๊ะ {{ b.table_id }} · {{ b.paid }}<hr>
+{% for i in items %}<div>{{ i.name }} x{{ i.qty }} <span style="float:right">{{ (i.price*i.qty)|round(2) }}</span></div>{% endfor %}<hr>
+รวม {{ b.subtotal }}<br>ส่วนลด {{ b.discount }}<br>ค่าบริการ {{ b.service }}<br>ภาษี {{ b.vat }}<br><b>สุทธิ {{ b.total }} บาท</b>
+{% if m %}<hr>สมาชิก {{ m.phone }} · แต้มสะสม {{ m.points }}{% endif %}</div>
+<button class="noprint" onclick="print()">พิมพ์</button>{% endblock %}

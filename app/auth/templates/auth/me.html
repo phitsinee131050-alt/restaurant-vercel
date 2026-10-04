@@ -1,0 +1,9 @@
+{% extends "auth/layout.html" %}{% block content %}<h2>👤 {{ session.name }}</h2>
+<div class="card" style="text-align:center">เบอร์ {{ session.username }}<br>แต้มสะสม<div style="font-size:48px;font-weight:bold;color:#e67e22">{{ m.points if m else 0 }}</div>
+<small>แจ้งเบอร์นี้กับพนักงานตอนเช็คบิลเพื่อสะสมแต้ม (ทุก 10 บาท = 1 แต้ม)</small></div>
+<div class="card" style="text-align:center;margin-top:12px"><a href="/t/reserve" style="display:inline-block;padding:12px 20px;background:#e67e22;color:#fff;border-radius:24px;text-decoration:none">📅 จองโต๊ะ</a>
+<a href="/t/queue" style="display:inline-block;padding:12px 20px;background:#27ae60;color:#fff;border-radius:24px;text-decoration:none">🎫 รับคิว</a></div>
+<h3>การจองของฉัน</h3>{% for r in res %}<div class="card" style="margin-bottom:8px">{{ r.time }} · {{ r.seats }} ที่นั่ง
+<form method="post" action="/t/reserve/{{ r.id }}/cancel" style="display:inline"><button style="width:auto;padding:4px 12px;background:#c0392b;font-size:14px;float:right">ยกเลิก</button></form></div>{% else %}<p>ยังไม่มีการจอง</p>{% endfor %}
+<h3>ประวัติการชำระเงิน</h3>{% for b in bills %}<div class="card" style="margin-bottom:8px">{{ b.paid }} — <b>{{ b.total }} บาท</b></div>{% else %}<p>ยังไม่มีประวัติ</p>{% endfor %}
+<p style="text-align:center">{% if session.role != 'customer' %}<a href="/admin/">ไปหลังบ้าน</a> · {% endif %}<a href="/logout">ออกจากระบบ</a></p>{% endblock %}
