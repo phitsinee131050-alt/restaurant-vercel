@@ -20,13 +20,27 @@ def create_app():
     app.register_blueprint(kitchen_bp, url_prefix="/kitchen")
     app.register_blueprint(admin_bp, url_prefix="/admin")
     from .sockets import kitchen_events  # noqa
-    with app.app_context():
+    from flask import request
+
+    def init_db():  # สร้างตาราง + ข้อมูลเริ่มต้น (ทำซ้ำได้ปลอดภัย)
+        from sqlalchemy import inspect, text
         from .shared.utils import seed, ensure_users
         db.create_all()
-        from sqlalchemy import inspect, text  # เพิ่มคอลัมน์ sku ให้ฐานข้อมูลเดิมโดยไม่ต้องลบไฟล์
         if "sku" not in [c["name"] for c in inspect(db.engine).get_columns("ingredient")]:
             db.session.execute(text("ALTER TABLE ingredient ADD COLUMN sku VARCHAR(40)")); db.session.commit()
         seed(); ensure_users()
+        if db.engine.dialect.name == "postgresql":  # ข้อมูลตั้งต้นใส่ id เอง -> ปรับตัวนับ id ของ Postgres ให้ต่อจากเลขสูงสุด
+            for t in ("dining_table", "ingredient"):
+                db.session.execute(text(f"SELECT setval(pg_get_serial_sequence('{t}', 'id'), COALESCE((SELECT MAX(id) FROM {t}), 1))"))
+            db.session.commit()
+
+    @app.before_request
+    def _ensure_db():  # เตรียมฐานข้อมูลตอนมีคนเข้าเว็บครั้งแรก (ไม่ทำตอน import) ถ้าพลาดจะลองใหม่ในคำขอถัดไป
+        if app.config.get("DB_READY") or request.endpoint == "static": return
+        try:
+            init_db(); app.config["DB_READY"] = True
+        except Exception as e:
+            db.session.rollback(); app.logger.error("DB init failed: %s: %s", type(e).__name__, str(e)[:300]); raise
     from flask import render_template
     from werkzeug.exceptions import HTTPException
     @app.errorhandler(Exception)  # ผู้ใช้ไม่เห็น Traceback เด็ดขาด (เก็บแค่ข้อความสั้นๆ ไว้ใน Terminal)
