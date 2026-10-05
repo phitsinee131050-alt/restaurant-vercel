@@ -3,8 +3,10 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 
 def _db_url():
     url = os.getenv("DATABASE_URL") or os.getenv("POSTGRES_URL")  # Vercel + Neon ใส่ให้เองหลังกด Connect
-    if url:
-        return url.replace("postgres://", "postgresql://", 1)
+    if url:  # ระบุไดรเวอร์ psycopg (v3) ชัดเจน กันกรณี SQLAlchemy เวอร์ชันใหม่/เก่าเลือกไดรเวอร์ไม่ตรงกับที่ติดตั้ง
+        for scheme in ("postgres://", "postgresql://"):
+            if url.startswith(scheme): return "postgresql+psycopg://" + url[len(scheme):]
+        return url
     return "sqlite:///" + os.path.join(BASE, "restaurant.db")        # รันในเครื่อง = ใช้ SQLite เหมือนเดิม
 
 class Config:
